@@ -1,0 +1,26 @@
+Django>=4.2,<6.0
+djangorestframework==3.17
+
+# Celery ecosystem
+celery>=5.3
+django-celery-beat>=2.6
+django-celery-results>=2.5
+
+# Redis
+redis>=5.0
+
+# Production server
+gunicorn>=21.0
+
+# Database (if using PostgreSQL)
+psycopg2-binary>=2.9
+
+# Optional but useful
+python-dotenv>=1.0
+
+requests
+beautifulsoup4
+nltk
+
+django-redis==6.0
+
