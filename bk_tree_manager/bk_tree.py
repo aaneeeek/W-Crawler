@@ -54,9 +54,9 @@ class BKTree:
     # -------------------------
     # Build from list
     # -------------------------
-    def build(self, words):
+    def build(self, words: list[bytes]):
         for w in words:
-            self.add(w)
+            self.add(w.decode())
 
     # -------------------------
     # Save tree to file
@@ -72,3 +72,5 @@ class BKTree:
     def load(filename):
         with open(filename, "rb") as f:
             return pickle.load(f)
+
+

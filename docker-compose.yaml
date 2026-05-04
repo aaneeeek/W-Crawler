@@ -51,6 +51,9 @@ services:
   redis:
     image: redis:7
     container_name: redis_server
+    volumes:
+      - redis_data:/data
 
 volumes:
   postgres_data:
+  redis_data:

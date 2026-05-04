@@ -5,3 +5,17 @@ class URLs(models.Model):
     url = models.URLField(unique=True)
 
 
+class Word(models.Model):
+    word = models.CharField(max_length=255, unique=True)
+
+
+class WordURL(models.Model):
+    word = models.ForeignKey(Word, on_delete=models.CASCADE)
+    url_id = models.IntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["word"]),
+        ]
+        unique_together = ("word", "url_id")
+
