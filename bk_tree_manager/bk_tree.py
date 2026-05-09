@@ -32,10 +32,7 @@ class BKTree:
     def __init__(self):
         self.root = None
 
-    # -------------------------
-    # Insert word
-    # -------------------------
-    def add(self, word):
+    def add(self, word: str):
         if self.root is None:
             self.root = BKNode(word)
             return
@@ -44,30 +41,43 @@ class BKTree:
 
         while True:
             dist = levenshtein(word, node.word)
-
-            if dist in node.children:
-                node = node.children[dist]
-            else:
-                node.children[dist] = BKNode(word)
+            if dist == 0:
                 break
+            else:
+                if dist in node.children:
+                    node = node.children[dist]
+                else:
+                    node.children[dist] = BKNode(word)
+                    break
 
-    # -------------------------
-    # Build from list
-    # -------------------------
+    def search(self, word, max_distance=2) -> list[str]:
+        if self.root is None:
+            return []
+        results = []
+
+        def _search(node):
+            dist = levenshtein(word, node.word)
+
+            if dist <= max_distance:
+                results.append(node.word)
+
+            lower = dist - max_distance
+            upper = dist + max_distance
+
+            for child_dist, child_node in node.children.items():
+                if lower <= child_dist <= upper:
+                    _search(child_node)
+        _search(self.root)
+        return results
+
     def build(self, words: list[bytes]):
         for w in words:
             self.add(w.decode())
 
-    # -------------------------
-    # Save tree to file
-    # -------------------------
     def save(self, filename):
         with open(filename, "wb") as f:
             pickle.dump(self, f)
 
-    # -------------------------
-    # Load tree from file
-    # -------------------------
     @staticmethod
     def load(filename):
         with open(filename, "rb") as f:

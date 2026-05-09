@@ -5,5 +5,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('manage/', include('w_crawl_manager.urls'))
+    path('manage/', include('w_crawl_manager.urls')),
+    path('search/', include('searcher.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

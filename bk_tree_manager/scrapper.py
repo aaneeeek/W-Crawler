@@ -72,12 +72,11 @@ def scrape_page(url_: dict[str, str]) -> list[str]:
         for word in nltk.word_tokenize(text):
             if word not in stop_words and len(word) > 2:
                 stemmed = stemmer.stem(word)
-                r.rpush(stemmed, url_id)
+                r.rpush(f"crawler_{stemmed}", url_id)
     except requests.exceptions.RequestException as e:
         print(f"Error scraping {url}: {e}")
         return []
 
-
-
     return urls_list
+
 

@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get('DEBUG') == 'true' else False
 
 ALLOWED_HOSTS = []
 
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'bk_tree_manager',
     'w_crawl_manager',
+    'searcher',
 ]
 
 MIDDLEWARE = [
@@ -61,9 +62,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'WebCrawler.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
     'default': {

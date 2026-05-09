@@ -10,7 +10,7 @@ class Word(models.Model):
 
 
 class WordURL(models.Model):
-    word = models.ForeignKey(Word, on_delete=models.CASCADE)
+    word = models.ForeignKey(Word, on_delete=models.CASCADE, related_name="word_url")
     url_id = models.IntegerField()
 
     class Meta:
