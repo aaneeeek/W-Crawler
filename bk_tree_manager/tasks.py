@@ -33,12 +33,12 @@ def crawl(cursor=0):
         url_objects = URLs.objects.filter(id__gt=last_id).order_by("id")
         links = list(url_objects.values("id", "url"))
 
-        keys = r.scan_iter("crawler_")
+        keys = r.scan_iter("crawler_*")
         for key in keys:
             word_str = key.decode().replace("crawler_", "")
             print(f'WORD STR = {word_str}')
             try:
-                url_ids = list(map(int, r.lrange(word_str, 0, -1)))
+                url_ids = list(map(int, r.lrange(key, 0, -1)))
                 word_obj, _ = Word.objects.get_or_create(word=word_str)
                 word_urls = [
                     WordURL(word=word_obj, url_id=int(url_id))
