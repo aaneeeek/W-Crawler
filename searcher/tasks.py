@@ -1,49 +1,16 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
-from bk_tree_manager.models import Word, WordURL
-from bk_tree_manager.serializers import WordSerializer
 from celery import shared_task
-import re
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
-import nltk
 from bk_tree_manager.bk_tree import BKTree
 from itertools import repeat
-import pickle
-
-
-def arrange_words(text: str) -> set[str]:
-    # remove non-alphabet characters
-    text = re.sub(r"[^a-zA-Z\s]", " ", text)
-    text = re.sub(r"\s+", " ", text).lower()
-    # Stopwords + Snowball stemming
-    stop_words = set(stopwords.words("english"))
-    stemmer = SnowballStemmer("english")
-    final_result: set[str] = set([])
-
-    for word in nltk.word_tokenize(text):
-        if word not in stop_words and len(word) > 2:
-            stemmed = stemmer.stem(word)
-            final_result.add(stemmed)
-    return final_result
-
-
-def get_result(word: str, tree: BKTree, level=1):
-    word_obj = Word.objects.get(word=word)
-    data = WordSerializer(word_obj).data
-    if len(data.get("urls")) > 0 or level == 2:
-        print(data)
-        return data
-    else:
-        result = []
-        new_words = tree.search(word, max_distance=3)
-        for w in new_words:
-            result += get_result(w, tree, level=2)
-        return result
+from connection.db_connection import PostgresDBConnector, MySQLDBConnector
+from connection.utils import scrape_url, get_content
+from searcher.utils import arrange_words, get_result
 
 
 @shared_task
-def search(search_sentence: str):
+def search(client_app):
+    search_sentence = client_app.prompt
     key_words = arrange_words(search_sentence)
     print(key_words)
     tree = BKTree.load(f"{os.environ.get('WORD_DICT_NAME')}.pkl")
@@ -51,6 +18,25 @@ def search(search_sentence: str):
         results = executor.map(get_result, key_words, repeat(tree))
 
     print(results)
+    for result_set in results:
+        for result in result_set:
+            text = get_content(result["url_obj"]["url"])
+            sql_commands = scrape_url(text, client_app.queries, client_app.tables, client_app.prompt)
+            if client_app.db_type == 'mysql':
+                pg_connector = PostgresDBConnector(
+                    client_app.db_name, client_app.db_host,
+                    client_app.db_user, client_app.db_password, client_app.port
+                )
+                for command in sql_commands:
+                    pg_connector.insert(command)
+            else:
+                mysql_connector = MySQLDBConnector(
+                    client_app.db_name, client_app.db_host,
+                    client_app.db_user, client_app.db_password, client_app.port
+                )
+                for command in sql_commands:
+                    mysql_connector.insert(command)
+
 
 
 

@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'bk_tree_manager',
     'w_crawl_manager',
     'searcher',
+    'connection'
 ]
 
 MIDDLEWARE = [

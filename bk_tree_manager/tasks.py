@@ -29,9 +29,7 @@ def crawl(cursor=0):
                 try:
                     URLs.objects.create(url=url)
                 except Exception as e:
-                    print('ERROR')
-        url_objects = URLs.objects.filter(id__gt=last_id).order_by("id")
-        links = list(url_objects.values("id", "url"))
+                    print(f'ERROR {e}')
 
         keys = r.scan_iter("crawler_*")
         for key in keys:
@@ -47,8 +45,10 @@ def crawl(cursor=0):
                 WordURL.objects.bulk_create(word_urls, ignore_conflicts=True)
                 r.delete(key)
                 tree.add(word_str)
-            except:
-                pass
+            except Exception as e:
+                print(f"Error occurred while storing URL-Word pair {e}")
+        url_objects = URLs.objects.filter(id__gt=last_id).order_by("id")
+        links = list(url_objects.values("id", "url"))
     print('completed scraping')
     tree.save(f"{os.environ.get('WORD_DICT_NAME')}.pkl")
     print('storing word -> id map i db')
