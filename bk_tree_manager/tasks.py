@@ -9,11 +9,12 @@ from .bk_tree import BKTree
 import redis
 
 r = redis.Redis(host='redis', port=6379, db=0)
-tree = BKTree()
+
 
 
 @shared_task
 def crawl(cursor=0):
+    tree = BKTree()
     print("...Started crawling...")
     url_objects = URLs.objects.filter(id__gt=cursor).order_by("id")
     links = list(url_objects.values("id", "url"))

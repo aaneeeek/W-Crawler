@@ -3,7 +3,7 @@ from django.db import models
 
 class URLs(models.Model):
     url = models.URLField(unique=True)
-    priority = models.DecimalField(default=0.0)
+    priority = models.DecimalField(default=0.0, max_digits=7, decimal_places=2)
 
 
 class Word(models.Model):
