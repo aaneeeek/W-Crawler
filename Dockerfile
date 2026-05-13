@@ -7,8 +7,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Ensure output is sent straight to terminal (no buffering)
 ENV PYTHONUNBUFFERED=1
 
+
+RUN useradd -ms /bin/sh -u 1001 app
+USER app
+
 # Set working directory
 WORKDIR /app
+
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -24,6 +29,9 @@ RUN pip install -r requirements.txt
 
 # Copy project
 COPY . .
+
+
+COPY --chown=app:app . /app
 
 
 RUN sed -i 's/\r$//' script.sh

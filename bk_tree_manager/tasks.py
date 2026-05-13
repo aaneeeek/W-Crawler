@@ -56,6 +56,17 @@ def crawl(cursor=0):
     del tree
 
 
+@shared_task
+def gen_tree():
+    tree = BKTree()
+    all_words = Word.objects.all()
+    for w in all_words:
+        tree.add(w.word)
+        print(w.word)
+    tree.save(f"{os.environ.get('WORD_DICT_NAME')}.pkl")
+    print("tree built completely")
+    del tree
+
 
 
 
