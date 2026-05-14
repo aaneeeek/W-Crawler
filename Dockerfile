@@ -8,8 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 
-RUN useradd -ms /bin/sh -u 1001 app
-USER app
+
 
 # Set working directory
 WORKDIR /app
@@ -22,6 +21,8 @@ RUN apt-get update && apt-get install -y \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
+
+
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
@@ -30,13 +31,14 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . .
 
-
 COPY --chown=app:app . /app
-
 
 RUN sed -i 's/\r$//' script.sh
 
 RUN chmod +x script.sh
+
+RUN useradd -ms /bin/sh -u 1001 app
+USER app
 
 # Expose port
 EXPOSE 8000

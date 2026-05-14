@@ -26,15 +26,25 @@ def arrange_words(text: str) -> set[str]:
 
 
 def get_result(word: str, tree: BKTree, level=1) -> list[dict[str, dict[str, str]]]:
-    word_obj = Word.objects.get(word=word)
-    data = URLSerializer(word_obj.word_url.all(), many=True).data
-    if len(data.get("urls")) > 0 or level == 2:
-        print(data)
-        return data
-    else:
+    try:
+        word_obj = Word.objects.get(word=word)
+        data = URLSerializer(word_obj.word_url.all(), many=True).data
+        if len(data) > 0 or level == 3:
+            print("length was not 0 **************************")
+            print(data)
+            return data
+        else:
+            print("length was 0 ###########################")
+            result = []
+            new_words = tree.search(word, max_distance=3)
+            for w in new_words:
+                result += get_result(w, tree, level=3)
+            return result
+    except Exception as e:
+        print(f"Word not found ----------------------- {e}")
         result = []
         new_words = tree.search(word, max_distance=3)
         for w in new_words:
-            result += get_result(w, tree, level=2)
+            result += get_result(w, tree, level=3)
         return result
 

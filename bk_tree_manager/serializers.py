@@ -10,8 +10,8 @@ class URLSerializer(ModelSerializer):
         fields = ["url_obj"]
 
     def get_url_obj(self, instance):
-        print("  .................  ", instance.url_id)
-        return URLs.objects.get(id=instance.url_id).values("url", "priority")
+        obj = URLs.objects.get(id=instance.url_id)
+        return {"url": obj.url, "priority": obj.priority}
 
 
 class WordSerializer(ModelSerializer):

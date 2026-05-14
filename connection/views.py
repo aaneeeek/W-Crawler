@@ -1,18 +1,18 @@
-from django.shortcuts import render, redirect
-from .forms import ClientForm
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .serializer import ClientSerializer
+from searcher.tasks import search
 
 
+@api_view(['POST'])
 def create_client(request):
-
-    if request.method == "POST":
-        form = ClientForm(request.POST)
-
-        if form.is_valid():
-            client_app = form.save()
-            print("client_success")  # change to your url name
-
-
-    else:
-        form = ClientForm()
-
-    return render(request, "client_form.html", {"form": form})
+    serializer = ClientSerializer(data=request.data)
+    if serializer.is_valid():
+        print("saving")
+        serializer.save()
+        client = serializer.data
+        search.delay(client)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    print(serializer.errors)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

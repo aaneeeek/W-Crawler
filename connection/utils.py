@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 from bs4 import BeautifulSoup
 import requests
@@ -23,8 +23,9 @@ if not api_key:
     raise ValueError("API key not found. Please set GEMINI_API_KEY environment variable.")
 
 # Configure the Gemini API client
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-1.5-flash")
+
+client = genai.Client(api_key=api_key)
+model = "gemini-2.0-flash"
 
 
 def scrape_url(content: str, queries: list[dict[str, str]], tables: list[dict[str, str]], desc: str) -> list[str]:
@@ -35,7 +36,7 @@ def scrape_url(content: str, queries: list[dict[str, str]], tables: list[dict[st
         table_queries = []
         for q in queries:
             if list(q.values())[0].startswith(table_name + "."):
-                table_queries.append(list(q.keys()[0]))
+                table_queries.append(list(q.keys())[0])
                 sql += list(q.values())[0].split(".")[1] + ","
         sql = sql[:-1]
         sql += ") VALUES"
@@ -50,7 +51,7 @@ def scrape_url(content: str, queries: list[dict[str, str]], tables: list[dict[st
             these are the different queries you will will use in obtaining data for the attributes: {table_queries}
             if you find nothing return an empty string
         """
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model=model, contents=prompt)
         sql = response.text
         sql_commands.append(sql)
     return sql_commands
