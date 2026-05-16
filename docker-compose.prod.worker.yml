@@ -1,0 +1,9 @@
+services:
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A WebCrawler worker -l info
+    env_file:
+      - .env.prod
+
+  

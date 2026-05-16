@@ -14,15 +14,6 @@ app.autodiscover_tasks()
 def debug_task(self):
     print(f'Request: {self.request!r}')
 
-#
-# app.conf.beat_schedule = {
-#     'add-every-30-seconds': {
-#         'task': 'bk_tree_manager.tasks.crawl',
-#         'schedule': 3600.0,
-#         # 'args': (16, 16)
-#     },
-# }
-
 
 app.conf.timezone = 'UTC'
 

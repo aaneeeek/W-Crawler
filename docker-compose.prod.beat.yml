@@ -1,0 +1,9 @@
+services:
+  beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A WebCrawler beat -l info
+    env_file:
+      - .env.prod
+
+  
