@@ -219,7 +219,8 @@ This transforms W-Crawler into a generalized automated data acquisition service.
 ```
 Clients registr their app through a post request to ```/connection/create/```
 example of data content is as shown below
-```
+
+```json
 {
     "db_name": "neondb",
     "db_host": "ep-divine-lab-ak4xsmub-pooler.c-3.us-west-2.aws.neon.tech",
