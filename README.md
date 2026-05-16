@@ -217,6 +217,43 @@ This transforms W-Crawler into a generalized automated data acquisition service.
     "prompt": "Find academic articles related to artificial intelligence"
 }
 ```
+Clients registr their app through a post request to ```/connection/create/```
+example of data content is as shown below
+```
+{
+    "db_name": "neondb",
+    "db_host": "ep-divine-lab-ak4xsmub-pooler.c-3.us-west-2.aws.neon.tech",
+    "db_user": "neondb_owner",
+    "db_password": "npg_EUv1hcrak5FT",
+    "port": 5432,
+    "tables": [
+        {"scholarships":{
+            "country": "VARCHAR(30) NOT NULL",
+            "sector": "VARCHAR(30) NOT NULL",
+            "min_age": "INTEGER",
+            "max_age": "INTEGER CHECK(max_age > min_age)",
+            "school_name": "VARCHAR(30)",
+            "min_degree_required": "VARCHAR(30)"
+        }}
+    ],
+    "prompt": "Get information about scholarship opportunities for college undergraduate and also secondary school students",
+    "queries": [
+        {"Country where the scholarship opportunity is found": "scholarships.country"},
+
+        {"Education sector (Engeneering, medicine,...)": "scholarships.sector"},
+
+        {"minimum age required": "scholarships.min_age"},
+
+        {"maximum age allowed": "scholarships.max_age"},
+
+        {"Name of the school or institute offering the scholarship": "scholarships.school_name"},
+
+        {"What is the minimum degree or education level required": "scholarships.min_degree_required"}
+    ],
+    "db_type": "postgres",
+    "constraints": ["no constraint"]
+}
+```
 
 ---
 
